@@ -19,6 +19,19 @@ services:
     networks:
       - private-network
 
+    
+  discovery:
+    build:
+      context: ../plataforma-humberto-store-discovery/
+      dockerfile: Dockerfile
+    container_name: store-discovery
+    image: store-discovery:latest
+    ports:
+      - 8761:8761
+    restart: always
+    networks:
+      - private-network
+
   account:
     build:
       context: ../plataforma-humberto-store-account-resource/
@@ -28,6 +41,7 @@ services:
       - spring.datasource.url=jdbc:postgresql://store-db-store:5432/store
       - spring.datasource.username=store
       - spring.datasource.password=store
+      - eureka.client.service-url.defaultZone = http://store-discovery:8761/eureka/
     deploy:
       mode: replicated
       replicas: 1
